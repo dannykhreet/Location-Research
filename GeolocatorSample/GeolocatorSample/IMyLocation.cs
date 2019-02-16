@@ -8,6 +8,17 @@ namespace GeolocatorSample
     {
         void ObtainMyLocation();
         event EventHandler<ILocationEventArgs> locationObtained;
+        bool IsGPSProviderAvailable();
+
+        double GetLatNetwork();
+        double GetlngNetwork();
+
+
+        double GetLatGPS();
+        double GetlngGPS();
+
+        double GetLatPassive();
+        double GetLongPassive();
     }
     public interface ILocationEventArgs
     {
@@ -15,3 +26,4 @@ namespace GeolocatorSample
         double lng { get; set; }
     }
 }
+

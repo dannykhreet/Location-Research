@@ -15,12 +15,13 @@ using System;
 using Android.Content;
 using Xamarin.Forms;
 using Android.Locations;
+using Android.Hardware;
 
 [assembly: Xamarin.Forms.Dependency(typeof(GetMyLocation))]
 
 namespace GeolocatorSample.Droid
 {
-    
+
     //---event arguments containing lat and lng---
     public class LocationEventArgs : EventArgs, ILocationEventArgs
     {
@@ -28,17 +29,17 @@ namespace GeolocatorSample.Droid
         public double lng { get; set; }
     }
 
-    public class GetMyLocation : Java.Lang.Object,
-                                IMyLocation,
-                                ILocationListener
+    public class GetMyLocation : Java.Lang.Object, IMyLocation, ILocationListener
     {
         LocationManager lm;
+        SensorManager sensorManager;
         public void OnProviderDisabled(string provider) { }
         public void OnProviderEnabled(string provider) { }
         public void OnStatusChanged(string provider,
             Availability status, Android.OS.Bundle extras)
         { }
         //---fired whenever there is a change in location---
+
         public void OnLocationChanged(Location location)
         {
             if (location != null)
@@ -70,15 +71,54 @@ namespace GeolocatorSample.Droid
         //---method to call to start getting location---
         public void ObtainMyLocation()
         {
-            lm = (LocationManager)
-                Forms.Context.GetSystemService(
-                    Context.LocationService);
-            lm.RequestLocationUpdates(
-                LocationManager.NetworkProvider,
+            lm = (LocationManager)Forms.Context.GetSystemService(Context.LocationService);
+            lm.RequestLocationUpdates(LocationManager.PassiveProvider,
                     0,   //---time in ms---
                     0,   //---distance in metres---
                     this);
+            
         }
+
+        public double GetLatNetwork()
+        {
+
+            return lm.GetLastKnownLocation("network").Latitude;
+        }
+
+        public double GetlngNetwork()
+        {
+
+            return lm.GetLastKnownLocation("network").Longitude;
+        }
+
+        public double GetLatGPS()
+        {
+
+            return lm.GetLastKnownLocation("gps").Latitude;
+        }
+
+        public double GetlngGPS()
+        {
+            return lm.GetLastKnownLocation("gps").Longitude;
+        }
+        public double GetLatPassive()
+        {
+
+            return lm.GetLastKnownLocation("passive").Latitude;
+        }
+
+        public double GetLongPassive()
+        {
+            return lm.GetLastKnownLocation("passive").Longitude;
+        }
+
+        public bool IsGPSProviderAvailable()
+        {
+            LocationManager manager = (LocationManager)MainActivity.Context.GetSystemService(Android.Content.Context.LocationService);
+            bool gpsProviderEnabled = manager.IsProviderEnabled(LocationManager.GpsProvider);
+            return gpsProviderEnabled;
+        }
+
         //---stop the location update when the object is set to
         // null---
         ~GetMyLocation()
