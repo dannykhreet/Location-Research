@@ -17,7 +17,8 @@ namespace GeolocatorSample
 	{
 		int count;
 		bool tracking;
-		Position savedPosition;
+        public Boolean Moved { get; set; }
+        Position savedPosition;
         private int totalChanges = 0;
         // Set speed delay for monitoring changes.
         SensorSpeed speed = SensorSpeed.UI;
@@ -55,8 +56,24 @@ namespace GeolocatorSample
                    // lblLng.Text = lng.ToString();
                 };
             loc.ObtainMyLocation();
+
+            try
+            {
+                if (Accelerometer.IsMonitoring)
+                    Accelerometer.Stop();
+                else
+                    Accelerometer.Start(speed);
+            }
+            catch (FeatureNotSupportedException fnsEx)
+            {
+                // Feature not supported on device
+            }
+            catch (Exception ex)
+            {
+                // Other error has occurred.
+            }
             // Register for reading changes, be sure to unsubscribe when finished
-            Accelerometer.ReadingChanged += Accelerometer_ReadingChanged;           
+            Accelerometer.ReadingChanged += Accelerometer_ReadingChanged;              
         }
         void EnryeMaxSecond_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -72,6 +89,18 @@ namespace GeolocatorSample
         private void Accelerometer_ReadingChanged(object sender, AccelerometerChangedEventArgs e)
         {
             var data = e.Reading;
+            float acc = 0.1f;
+            float accmiMinus = -0.1f;
+            if (data.Acceleration.X >= acc || data.Acceleration.Y >= acc || data.Acceleration.X <= accmiMinus || data.Acceleration.Y <= accmiMinus)
+            {
+                Moved = true;
+                AccelerometerStatus.Text = "Accelerometer Status:  " + Moved.ToString();
+            }
+            else
+            {
+                Moved = false;
+                AccelerometerStatus.Text = "Accelerometer Status:  " + Moved.ToString();
+            }
             AccelerometerLabel.Text= $"Reading: X: {data.Acceleration.X}, Y: {data.Acceleration.Y}, Z: {data.Acceleration.Z}";
         }
 

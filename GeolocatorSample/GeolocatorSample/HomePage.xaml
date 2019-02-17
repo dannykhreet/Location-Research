@@ -49,8 +49,10 @@
                     </StackLayout>
                     <StackLayout Orientation="Horizontal">
                         <Label Text="Enable Accelerometer"/>
-                        <Switch  IsToggled="False"  Toggled="ToggleAccelerometer"/>
+                    </StackLayout>
+                    <StackLayout>
                         <Label x:Name="AccelerometerLabel"/>
+                        <Label x:Name="AccelerometerStatus" Text="Accelerometer Status"/>
                     </StackLayout>
                     <StackLayout Orientation="Horizontal">
                         <Label Text="Total Gps "/>
