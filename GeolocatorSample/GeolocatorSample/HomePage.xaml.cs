@@ -17,6 +17,7 @@ namespace GeolocatorSample
 	{
 		int count;
 		bool tracking;
+        public Boolean AccelerationActive { get; set; }
         public Boolean Moved { get; set; }
         Position savedPosition;
         private int totalChanges = 0;
@@ -94,14 +95,28 @@ namespace GeolocatorSample
             if (data.Acceleration.X >= acc || data.Acceleration.Y >= acc || data.Acceleration.X <= accmiMinus || data.Acceleration.Y <= accmiMinus)
             {
                 Moved = true;
-                AccelerometerStatus.Text = "Accelerometer Status:  " + Moved.ToString();
+                if ((AccelerationActive && Moved))
+                {
+                    if (!stopwatch.IsRunning)
+                    {
+                        stopwatch.Start();
+                    }
+                }
+                AccelerometerStatus.Text = "Motion status:  " + Moved.ToString();
             }
             else
             {
                 Moved = false;
-                AccelerometerStatus.Text = "Accelerometer Status:  " + Moved.ToString();
+                if ((AccelerationActive && !Moved))
+                {
+                    if (stopwatch.IsRunning)
+                    {
+                        btnStop_Clicked();
+                    }
+                }
+                AccelerometerStatus.Text = "Motion status:  " + Moved.ToString();
             }
-            AccelerometerLabel.Text= $"Reading: X: {data.Acceleration.X}, Y: {data.Acceleration.Y}, Z: {data.Acceleration.Z}";
+           // AccelerometerLabel.Text= $"Reading: X: {data.Acceleration.X}, Y: {data.Acceleration.Y}, Z: {data.Acceleration.Z}";
         }
 
         private async Task ButtonGetGPS_Clicked()
@@ -143,7 +158,7 @@ namespace GeolocatorSample
 			}
 		}
 
-        private void btnStop_Clicked(object sender, EventArgs e)
+        private void btnStop_Clicked()
         {
             btnStart.Text = "Resume";
             EnryeMaxSecond.IsEnabled = true;
@@ -168,23 +183,9 @@ namespace GeolocatorSample
             NumderTotalLoops.Text = TotalLoops.ToString();
 
         }
-        public void ToggleAccelerometer()
+        public void ToggleAccelerometer(object sender, ToggledEventArgs e)
         {
-            try
-            {
-                if (Accelerometer.IsMonitoring)
-                    Accelerometer.Stop();
-                else
-                    Accelerometer.Start(speed);
-            }
-            catch (FeatureNotSupportedException fnsEx)
-            {
-                // Feature not supported on device
-            }
-            catch (Exception ex)
-            {
-                // Other error has occurred.
-            }
+            AccelerationActive = e.Value;
         }
 
 
@@ -243,8 +244,7 @@ namespace GeolocatorSample
                     stopwatch.Stop();
                     stopwatch.Reset();
                     await ButtonGetGPS_Clicked();
-                    stopwatch.Start();
-                    
+                    stopwatch.Start();  
                 }            
             });
             return true;

@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="GeolocatorSample.HomePage"
-			 Title="Test 1">
+			 Title="LBA 5">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="4*"/>
@@ -48,11 +48,12 @@
                                Clicked="ResetTotalLoops_Clicked"/>
                     </StackLayout>
                     <StackLayout Orientation="Horizontal">
-                        <Label Text="Enable Accelerometer"/>
+                        <Label Text="Stop Updates when sleep"/>
+                        <Switch  IsToggled="False"  Toggled="ToggleAccelerometer"/>
                     </StackLayout>
                     <StackLayout>
-                        <Label x:Name="AccelerometerLabel"/>
-                        <Label x:Name="AccelerometerStatus" Text="Accelerometer Status"/>
+                        <!--<Label x:Name="AccelerometerLabel"/>-->
+                        <Label x:Name="AccelerometerStatus" Text="Motion status"/>
                     </StackLayout>
                     <StackLayout Orientation="Horizontal">
                         <Label Text="Total Gps "/>
